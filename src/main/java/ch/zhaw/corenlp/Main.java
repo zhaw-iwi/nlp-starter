@@ -1,5 +1,7 @@
 package ch.zhaw.corenlp;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 
@@ -11,26 +13,49 @@ import com.sun.syndication.io.XmlReader;
 
 public class Main {
 
+	private static final String FILE_T2F = "trainingText2Facts";
+	private static final String FILE_F2T = "trainingFacts2Text";
+
 	public static void main(String[] args) throws IllegalArgumentException, FeedException, IOException {
 
 		URL feedSource = new URL("https://www.democracynow.org/democracynow.rss");
 		SyndFeedInput input = new SyndFeedInput();
 		SyndFeed feed = input.build(new XmlReader(feedSource));
 
-		Manager mgmt = new Manager();
-		Extractor extractor = new Extractor(mgmt);
-
+		Manager mgmt;
+		Extractor extractor;
+		String text;
 		for (Object current : feed.getEntries()) {
-			SyndEntry entry = (SyndEntry) current;
-			String text = entry.getDescription().getValue();
+			mgmt = new Manager();
+			extractor = new Extractor(mgmt);
+
+			text = ((SyndEntry) current).getDescription().getValue();
 
 			System.out.println("> Processing\n" + text.replace(". ", ".\n") + "\n");
 
 			extractor.getFacts(text);
+
+			System.out.println(mgmt);
+
+			Main.writeToFile(text, mgmt.toString());
 		}
 
-		mgmt.out();
+	}
 
+	private static void writeToFile(String news, String facts) throws IOException {
+		BufferedWriter writer = new BufferedWriter(new FileWriter(Main.FILE_F2T, true));
+		writer.append(news);
+		writer.newLine();
+		writer.append(facts);
+		writer.newLine();
+		writer.close();
+
+		/*writer = new BufferedWriter(new FileWriter(Main.FILE_T2F, true));
+		writer.append(facts);
+		writer.newLine();
+		writer.append(news);
+		writer.newLine();
+		writer.close();*/
 	}
 
 }

@@ -9,6 +9,8 @@ import edu.stanford.nlp.util.Pair;
 
 public class Manager {
 
+	private static final String EOL = "\n";
+
 	private final Map<String, List<String>> singleValuedFacts;
 	private final Map<String, List<Pair<String, String>>> doubleValuedFacts;
 
@@ -26,10 +28,38 @@ public class Manager {
 		return false;
 	}
 
+	private String cleanUp(String string) {
+		String trimed = string.trim();
+		if (trimed.endsWith(".")) {
+			trimed = trimed.substring(0, trimed.length() - 1);
+		}
+
+		String noSpecialChars = trimed.replace("'", "").replace(".", " ");
+		String lower = noSpecialChars.toLowerCase();
+		String[] tokens = lower.split(" ");
+		if (tokens.length < 1) {
+			return "";
+		}
+
+		StringBuffer result = new StringBuffer(tokens[0]);
+		for (int i = 1; i < tokens.length; i++) {
+			String tokenCapitalised = "";
+			if (tokens[i].length() > 0) {
+				tokenCapitalised += tokens[i].substring(0, 1).toUpperCase();
+			}
+			if (tokens[i].length() > 1) {
+				tokenCapitalised += tokens[i].substring(1);
+			}
+			result.append(tokenCapitalised);
+		}
+
+		return result.toString();
+	}
+
 	public void store(String fact, String arg) {
 
-		String factKey = fact.toLowerCase().trim().replace(" ", "");
-		String argClean = arg.toLowerCase().trim().replace(" ", "");
+		String factKey = cleanUp(fact);
+		String argClean = cleanUp(arg);
 
 		if (!this.singleValuedFacts.containsKey(factKey)) {
 			this.singleValuedFacts.put(factKey, new ArrayList<String>());
@@ -42,27 +72,29 @@ public class Manager {
 	}
 
 	public void store(String fact, String arg1, String arg2) {
-		String factKey = fact.toLowerCase().trim().replace(" ", "");
-		String arg1Clearn = arg1.toLowerCase().trim().replace(" ", "");
-		String arg2Clearn = arg2.toLowerCase().trim().replace(" ", "");
+		String factKey = cleanUp(fact);
+		String arg1Clearn = cleanUp(arg1);
+		String arg2Clearn = cleanUp(arg2);
 		if (!this.doubleValuedFacts.containsKey(factKey)) {
 			this.doubleValuedFacts.put(factKey, new ArrayList<Pair<String, String>>());
 		}
 		this.doubleValuedFacts.get(factKey).add(new Pair<String, String>(arg1Clearn, arg2Clearn));
 	}
 
-	public void out() {
+	public String toString() {
+		StringBuffer result = new StringBuffer();
 		for (String key : this.singleValuedFacts.keySet()) {
 			List<String> values = this.singleValuedFacts.get(key);
 			for (String value : values) {
-				System.out.println(key + "(" + value + ")");
+				result.append(key + "(" + value + ")." + Manager.EOL);
 			}
 		}
 		for (String key : this.doubleValuedFacts.keySet()) {
 			List<Pair<String, String>> values = this.doubleValuedFacts.get(key);
 			for (Pair<String, String> value : values) {
-				System.out.println(key + "(" + value.first + ", " + value.second + ")");
+				result.append(key + "(" + value.first + ", " + value.second + ")." + Manager.EOL);
 			}
 		}
+		return result.toString();
 	}
 }
