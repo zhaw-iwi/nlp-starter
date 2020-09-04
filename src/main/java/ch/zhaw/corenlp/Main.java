@@ -44,18 +44,27 @@ public class Main {
 
 	private static void writeToFile(String news, String facts) throws IOException {
 		BufferedWriter writer = new BufferedWriter(new FileWriter(Main.FILE_F2T, true));
+		writer.append("<|startoftext|>");
+		writer.append("[NEWS_PROMPT]");
 		writer.append(news);
 		writer.newLine();
+		writer.append("[FACTS_PROMPT]");
 		writer.append(facts);
+		writer.newLine();
+		writer.append("<|endoftext|>");
+		writer.close();
+
+		writer = new BufferedWriter(new FileWriter(Main.FILE_T2F, true));
+		writer.append("<|startoftext|>");
+		writer.append("[FACTS_PROMPT]");
+		writer.append(facts);
+		writer.newLine();
+		writer.append("[NEWS_PROMPT]");
+		writer.append(news);
+		writer.append("<|endoftext|>");
 		writer.newLine();
 		writer.close();
 
-		/*writer = new BufferedWriter(new FileWriter(Main.FILE_T2F, true));
-		writer.append(facts);
-		writer.newLine();
-		writer.append(news);
-		writer.newLine();
-		writer.close();*/
 	}
 
 }
