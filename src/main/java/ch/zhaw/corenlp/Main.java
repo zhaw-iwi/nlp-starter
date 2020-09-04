@@ -43,7 +43,7 @@ public class Main {
 	}
 
 	private static void writeToFile(String news, String facts) throws IOException {
-		BufferedWriter writer = new BufferedWriter(new FileWriter(Main.FILE_F2T, true));
+		BufferedWriter writer = new BufferedWriter(new FileWriter(Main.FILE_T2F, true));
 		writer.append("<|startoftext|>");
 		writer.append("[NEWS_PROMPT]");
 		writer.append(news);
@@ -54,7 +54,7 @@ public class Main {
 		writer.append("<|endoftext|>");
 		writer.close();
 
-		writer = new BufferedWriter(new FileWriter(Main.FILE_T2F, true));
+		writer = new BufferedWriter(new FileWriter(Main.FILE_F2T, true));
 		writer.append("<|startoftext|>");
 		writer.append("[FACTS_PROMPT]");
 		writer.append(facts);
