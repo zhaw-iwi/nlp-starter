@@ -34,7 +34,7 @@ public class Manager {
 			trimed = trimed.substring(0, trimed.length() - 1);
 		}
 
-		String noSpecialChars = trimed.replace("'", "").replace(".", " ");
+		String noSpecialChars = trimed.replace("'", "").replace("’", "").replace(".", " ");
 		String lower = noSpecialChars.toLowerCase();
 		String[] tokens = lower.split(" ");
 		if (tokens.length < 1) {
