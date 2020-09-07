@@ -17,6 +17,16 @@ public class Extractor {
 	private final Manager mgmt;
 	private final StanfordCoreNLP pipeline;
 
+	public static void main(String[] args) {
+		String text = "Apple CEO Tim Cook wants the tech industry to take action against \"fake news\" stories that are polluting the web.";
+
+		Manager mgmt = new Manager();
+		Extractor ext = new Extractor(mgmt);
+		ext.getFacts(text);
+
+		System.out.println(mgmt);
+	}
+
 	public Extractor(Manager mgmt) {
 		this.mgmt = mgmt;
 

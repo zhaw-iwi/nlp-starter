@@ -11,15 +11,66 @@ public class Manager {
 
 	private static final String EOL = "\n";
 
-	private final Map<String, List<String>> singleValuedFacts;
-	private final Map<String, List<Pair<String, String>>> doubleValuedFacts;
+	private final Map<String, List<String>> unaryFacts;
+	private final Map<String, List<Pair<String, String>>> binaryFacts;
 
 	public Manager() {
-		this.singleValuedFacts = new HashMap<String, List<String>>();
-		this.doubleValuedFacts = new HashMap<String, List<Pair<String, String>>>();
+		this.unaryFacts = new HashMap<String, List<String>>();
+		this.binaryFacts = new HashMap<String, List<Pair<String, String>>>();
 	}
 
-	private boolean contains(List<String> hayStack, String needle) {
+	public void store(String fact, String arg) {
+
+		String factKey = cleanUp(fact);
+		String argClean = cleanUp(arg);
+
+		// forward storage
+		if (!this.unaryFacts.containsKey(factKey)) {
+			this.unaryFacts.put(factKey, new ArrayList<String>());
+		}
+
+		List<String> values = this.unaryFacts.get(factKey);
+		if (!this.contains(values, argClean)) {
+			values.add(argClean);
+		}
+	}
+
+	public void store(String fact, String arg1, String arg2) {
+
+		String factKey = toCamelCase(cleanUp(fact));
+
+		String arg1Clean = cleanUp(arg1);
+		String arg1List = toList(arg1Clean);
+
+		String arg2Clean = cleanUp(arg2);
+		String arg2List = toList(arg2Clean);
+
+		// forward storage
+		if (!this.binaryFacts.containsKey(factKey)) {
+			this.binaryFacts.put(factKey, new ArrayList<Pair<String, String>>());
+		}
+		List<Pair<String, String>> values = this.binaryFacts.get(factKey);
+		values.add(new Pair<String, String>(arg1List, arg2List));
+	}
+
+	public String toString() {
+		StringBuffer result = new StringBuffer();
+		for (String key : this.unaryFacts.keySet()) {
+			List<String> values = this.unaryFacts.get(key);
+			for (String value : values) {
+				result.append(key + "(" + value + ")." + Manager.EOL);
+			}
+		}
+		for (String key : this.binaryFacts.keySet()) {
+			List<Pair<String, String>> values = this.binaryFacts.get(key);
+			for (Pair<String, String> value : values) {
+				result.append(key + "(" + value.first + ", " + value.second + ")." + Manager.EOL);
+			}
+		}
+		return result.toString();
+	}
+
+	private static boolean contains(List<String> hayStack, String needle) {
 		for (String current : hayStack) {
 			if (current.equals(needle)) {
 				return true;
@@ -28,15 +79,16 @@ public class Manager {
 		return false;
 	}
 
-	private String cleanUp(String string) {
-		String trimed = string.trim();
-		if (trimed.endsWith(".")) {
-			trimed = trimed.substring(0, trimed.length() - 1);
-		}
+	private static String cleanUp(String string) {
+		String noHTML = string.replaceAll("\\<.*?\\>", "");
+		String noSpecialChars = noHTML.replaceAll("[^a-zA-Z0-9]", " ");
+		String trimed = noSpecialChars.trim();
+		String lower = trimed.toLowerCase();
+		return lower;
+	}
 
-		String noSpecialChars = trimed.replace("'", "").replace("’", "").replace(".", " ");
-		String lower = noSpecialChars.toLowerCase();
-		String[] tokens = lower.split(" ");
+	private static String toCamelCase(String string) {
+		String[] tokens = string.split(" ");
 		if (tokens.length < 1) {
 			return "";
 		}
@@ -56,45 +108,20 @@ public class Manager {
 		return result.toString();
 	}
 
-	public void store(String fact, String arg) {
+	private static String toList(String string) {
+		StringBuffer result = new StringBuffer("[");
 
-		String factKey = cleanUp(fact);
-		String argClean = cleanUp(arg);
-
-		if (!this.singleValuedFacts.containsKey(factKey)) {
-			this.singleValuedFacts.put(factKey, new ArrayList<String>());
-		}
-
-		List<String> values = this.singleValuedFacts.get(factKey);
-		if (!this.contains(values, argClean)) {
-			values.add(argClean);
-		}
-	}
-
-	public void store(String fact, String arg1, String arg2) {
-		String factKey = cleanUp(fact);
-		String arg1Clearn = cleanUp(arg1);
-		String arg2Clearn = cleanUp(arg2);
-		if (!this.doubleValuedFacts.containsKey(factKey)) {
-			this.doubleValuedFacts.put(factKey, new ArrayList<Pair<String, String>>());
-		}
-		this.doubleValuedFacts.get(factKey).add(new Pair<String, String>(arg1Clearn, arg2Clearn));
-	}
-
-	public String toString() {
-		StringBuffer result = new StringBuffer();
-		for (String key : this.singleValuedFacts.keySet()) {
-			List<String> values = this.singleValuedFacts.get(key);
-			for (String value : values) {
-				result.append(key + "(" + value + ")." + Manager.EOL);
+		String[] tokens = string.split(" ");
+		for (int i = 0; i < tokens.length; i++) {
+			if (!tokens[i].isBlank()) {
+				result.append(tokens[i]);
+				if (i < tokens.length - 1) {
+					result.append(", ");
+				}
 			}
 		}
-		for (String key : this.doubleValuedFacts.keySet()) {
-			List<Pair<String, String>> values = this.doubleValuedFacts.get(key);
-			for (Pair<String, String> value : values) {
-				result.append(key + "(" + value.first + ", " + value.second + ")." + Manager.EOL);
-			}
-		}
+		result.append("]");
+
 		return result.toString();
 	}
 }
