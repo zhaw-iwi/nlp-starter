@@ -71,6 +71,8 @@ public class Main {
 				String text = Jsoup.parse((String) firstHit.get("snippet")).text();
 
 				result.put(current, text);
+				
+				System.out.println("> DONE with " + current + ": " + text);
 			}
 		}
 
