@@ -1,0 +1,90 @@
+Apple CEO Tim Cook wants the tech industry to take action against "fake news" stories that are polluting the web.
+
+person(tim).
+person(cook).
+organization(apple).
+title(ceo).
+o(tech).
+o(industry).
+o(fake).
+o(news).
+o(action).
+
+
+take(techIndustry, action).
+take(tech, industry, action).
+
+be(timCook, ceo).
+be())
+be(tim, cook, ceo).
+
+want(appleCeoTimCook, techIndustry).
+
+want(apple, tech)
+want(apple, industry)
+want(ceo, tech)
+want(ceo, industry)
+want(tim, tech)
+want(tim, industry)
+want(cook, tech)
+want(cook, industry)
+
+want(apple, ceo, tim, cook, tech, industry)
+
+takeActionAgainst(tech, fake)
+takeActionAgainst(tech, news)
+takeActionAgainst(industry, fake)
+takeActionAgainst(industry, news)
+
+takeActionAgainst(tech, industry, fake, news)
+
+
+
+beCeoOf(timCook, apple).
+takeActionAgainst(techIndustry, fakeNews).
+
+
+
+
+
+
+Apple CEO Tim Cook wants the tech industry to take action against "fake news" stories that are polluting the web.
+
+person(tim).
+person(cook).
+organization(apple).
+title(ceo).
+
+be(timCook, ceo).
+beCeoOf(timCook, apple).
+want(appleCeoTimCook, techIndustry).
+take(techIndustry, action).
+takeActionAgainst(techIndustry, fakeNews).
+
+
+
+
+
+want(appleCeoTimCook, X) :- take(X, action), takeActionAgainst(X, fakeNews).
+take(X, action) :- want(appleCeoTimCook, X), takeActionAgainst(X, fakeNews).
+takeActionAgainst(X, fakeNews) :- want(appleCeoTimCook, X), take(X, action). 
+
+
+bla(X, Y) :- be(X, ceo), beCeoOf(X, apple), want(X, Y), take(Y, action), takeActionAgainst(Y, fakeNews).
+
+
+
+
+
+
+be(timCook, ceo).
+beCeoOf(timCook, apple).
+
+want(appleCeoTimCook, techIndustry).
+take(techIndustry, action).
+
+takeActionAgainst(techIndustry, fakeNews).
+
+// transitive
+wantTake(A, C) :- person(A), want(A, B), o(B), take(B, C), o(C).
+wantTakeActionAgainst(A, C) :- person(A), want(A, B), o(B), takeActionAgainst(B, C), o(C).
