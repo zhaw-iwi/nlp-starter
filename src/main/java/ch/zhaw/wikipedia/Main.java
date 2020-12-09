@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,64 +24,138 @@ import com.opencsv.exceptions.CsvValidationException;
 
 public class Main {
 
-	public static void main(String[] args) throws CsvValidationException, IOException {
+	public static void main(String[] args) throws IOException, CsvValidationException {
 		System.out.println("> Hello :-)");
 
-		// FIRST read names of historical figures in particular language
-		System.out.println("> Getting names ...");
+		List<HistoricalFigure> historicalFigures = Main.readFromCSV("ressources/pantheon.tsv");
+		Main.completeUsingWiki(historicalFigures);
 
-		List<String> names = new ArrayList<String>();
+		// TODO
+		// process all figures in order to (insert into DB, create training data, ...)
+	}
 
-		CSVParser parser = new CSVParserBuilder().withSeparator(',').build();
-		CSVReader csvReader = new CSVReaderBuilder(new FileReader("pantheon/wikilangs-ende.csv")).withCSVParser(parser)
-				.build();
+	/**
+	 * Use of OpenCSV to read from tab-separated file
+	 * 
+	 * @param filePath
+	 * @return
+	 * @throws IOException
+	 * @throws CsvValidationException
+	 */
+	private static List<HistoricalFigure> readFromCSV(String filePath) throws IOException, CsvValidationException {
+		System.out.println("> Reading from CSV: START");
 
-		int i = 0;
-		String[] values = csvReader.readNext();
-		while (values != null) {
-			if (values[1].equals("en")) {
-				names.add(values[2]);
+		List<HistoricalFigure> result = new ArrayList<HistoricalFigure>();
+
+		FileReader csvFileReader = new FileReader("ressources/pantheon.tsv");
+		CSVParser tsvParser = new CSVParserBuilder().withSeparator('\t').build();
+		CSVReader csvReader = new CSVReaderBuilder(csvFileReader).withCSVParser(tsvParser).build();
+
+		csvReader.readNext(); // skip header row
+
+		// LOOP THROUGH EACH LINE
+		String[] row = csvReader.readNext();
+		String name;
+		int birthyear;
+		String birthyearRaw;
+		String gender;
+		String occupation;
+		while (row != null) {
+
+//			for (int i = 0; i < row.length; i++) {
+//				System.out.print(row[i] + "\t");
+//			}
+//			System.out.println();
+
+			name = row[1];
+			birthyearRaw = row[11];
+			try {
+				birthyear = Integer.parseInt(birthyearRaw);
+			} catch (NumberFormatException e) {
+				System.out.println(name + ": " + e.getMessage());
+				birthyear = -1;
 			}
-			values = csvReader.readNext();
+			gender = row[12];
+			occupation = row[13];
+
+			result.add(new HistoricalFigure(name, birthyear, gender, occupation));
+
+			row = csvReader.readNext();
 		}
 
-		System.out.println("> Getting names DONE. " + names.size() + " names read.");
+		System.out.println("> Reading from CSV: DONE");
+		System.out.println("> Read " + result.size() + " figures");
 
-		// SECOND request Wiki page for each name
-		System.out.println("> Fetching from WikiPedia ...");
+		return result;
+	}
 
-		Map<String, String> result = new HashMap<String, String>();
+	/**
+	 * Use of GSON to request data from WikiPedia and extract description from JSON
+	 * response
+	 * 
+	 * @param figures
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 */
+	private static void completeUsingWiki(List<HistoricalFigure> figures) throws MalformedURLException, IOException {
+		System.out.println("> Reading from WikiPedia: START");
+		List<HistoricalFigure> sample = figures.subList(0, 10);
 
+		// LOOP THROUGH EACH HISTORICAL FIGURE
+		int n = 0;
+		String description;
+		String descriptionWithHTML;
+		String nameURLEncoded;
 		String url;
-		String nameUrlEncoded;
-		for (String current : names) {
-			nameUrlEncoded = URLEncoder.encode(current, StandardCharsets.UTF_8.toString());
-			url = "https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=" + nameUrlEncoded
+		Gson gson = new Gson();
+		Map<String, Object> response;
+		Map<String, Object> responseQuery;
+		List<Object> responseQuerySearch;
+		Map<String, Object> responseQuerySearchFirst;
+		for (HistoricalFigure current : sample) {
+
+			// 1. construct URL, e.g.
+			// https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=Aristotle&format=json
+			nameURLEncoded = URLEncoder.encode(current.getName(), StandardCharsets.UTF_8);
+			url = "https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=" + nameURLEncoded
 					+ "&format=json";
+			System.out.println(url);
 
-			InputStream is = new URL(url).openStream();
-			Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
+			// 2. construct reader
+			InputStream jsonInputStream = new URL(url).openStream();
+			Reader jsonReader = new InputStreamReader(jsonInputStream, StandardCharsets.UTF_8);
 
-			Gson gson = new Gson();
-			Map<String, Object> deserialised = gson.fromJson(reader, Map.class);
-			Map<String, Object> query = (Map<String, Object>) deserialised.get("query");
-			List<Object> search = (List<Object>) query.get("search");
-			if (search.size() > 0) {
-				Map<String, Object> firstHit = (Map<String, Object>) search.get(0);
-				String text = Jsoup.parse((String) firstHit.get("snippet")).text();
+			// 3. execute request and navigate response
+			response = gson.fromJson(jsonReader, Map.class);
+			responseQuery = (Map<String, Object>) response.get("query");
+			responseQuerySearch = (ArrayList<Object>) responseQuery.get("search");
 
-				result.put(current, text);
-				
-				System.out.println("> DONE with " + current + ": " + text);
+			if (responseQuerySearch.size() > 0) {
+				responseQuerySearchFirst = (Map<String, Object>) responseQuerySearch.get(0);
+				descriptionWithHTML = (String) responseQuerySearchFirst.get("snippet");
+				description = Main.removeHTML(descriptionWithHTML);
+				n++;
+			} else {
+				description = null;
 			}
+
+			// 4. set description
+			current.setDescription(description);
+			System.out.println(description);
 		}
 
-		System.out.println("> Fetching from WikiPedia DONE. " + result.size() + " descriptions fetched.");
+		System.out.println("> Reading from WikiPedia: DONE");
+		System.out.println("> Found " + n + " descriptions");
+	}
 
-		// THIRD to file?
-		for (String current : result.keySet()) {
-			System.out.println(current + "\t" + result.get(current));
-		}
+	/**
+	 * Use of JSoup to remove HTML elements
+	 * 
+	 * @param withHTML
+	 * @return
+	 */
+	private static String removeHTML(String withHTML) {
+		return Jsoup.parse(withHTML).text();
 	}
 
 }
