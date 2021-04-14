@@ -10,6 +10,8 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 
+import edu.stanford.nlp.ie.util.RelationTriple;
+import edu.stanford.nlp.naturalli.NaturalLogicAnnotations;
 import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.CoreEntityMention;
 import edu.stanford.nlp.pipeline.CoreSentence;
@@ -56,13 +58,12 @@ public class ExtractionScriptFromRSS {
 				}
 
 				// 3.2 Triples
-				/*
-				 * for (RelationTriple relationTriple : sentence.coreMap()
-				 * .get(NaturalLogicAnnotations.RelationTriplesAnnotation.class)) {
-				 * System.out.println(relationTriple.relationLemmaGloss() + "(" +
-				 * relationTriple.subjectLemmaGloss() + ", " + relationTriple.objectLemmaGloss()
-				 * + ")"); }
-				 */
+				for (RelationTriple relationTriple : sentence.coreMap()
+						.get(NaturalLogicAnnotations.RelationTriplesAnnotation.class)) {
+					System.out.println(relationTriple.relationLemmaGloss() + "(" + relationTriple.subjectLemmaGloss()
+							+ ", " + relationTriple.objectLemmaGloss() + ")");
+				}
+
 			}
 			System.out.println("</extracted>");
 			System.out.println("</entry>");
