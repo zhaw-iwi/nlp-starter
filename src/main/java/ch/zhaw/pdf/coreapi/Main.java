@@ -19,7 +19,7 @@ public class Main {
 					"artificial+intelligence")) {
 
 				// for every searchquery
-				final File file = new File("coreApiParser/" + searchQuery + "_" + System.currentTimeMillis() + ".txt");
+				final File file = new File("pdfOut/coreApiParser/" + searchQuery + "_" + System.currentTimeMillis() + ".txt");
 				final FileOutputStream outputStream = new FileOutputStream(file.getPath());
 				System.out.println("writing test file to " + file.getPath());
 

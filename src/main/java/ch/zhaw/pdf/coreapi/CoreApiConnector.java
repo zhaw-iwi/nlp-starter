@@ -29,7 +29,7 @@ public class CoreApiConnector {
   private static final int MAX_PAGE_SIZE = 100;
 
   private final File dummyFile = new File("");
-  private final String absolutePath = this.dummyFile.getAbsolutePath() + "/coreApiParser";
+  private final String absolutePath = this.dummyFile.getAbsolutePath() + "/pdfOut/coreApiParser";
   private int totalHits;
   private int offset;
   private String requestStatus;
