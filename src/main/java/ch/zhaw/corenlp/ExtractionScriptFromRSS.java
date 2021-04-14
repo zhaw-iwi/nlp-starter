@@ -10,14 +10,12 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 
-import edu.stanford.nlp.ie.util.RelationTriple;
-import edu.stanford.nlp.naturalli.NaturalLogicAnnotations;
 import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.CoreEntityMention;
 import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
-public class ExtractionScript {
+public class ExtractionScriptFromRSS {
 
 	public static void main(String[] args) throws IllegalArgumentException, FeedException, IOException {
 
@@ -58,11 +56,13 @@ public class ExtractionScript {
 				}
 
 				// 3.2 Triples
-				/*for (RelationTriple relationTriple : sentence.coreMap()
-						.get(NaturalLogicAnnotations.RelationTriplesAnnotation.class)) {
-					System.out.println(relationTriple.relationLemmaGloss() + "(" + relationTriple.subjectLemmaGloss()
-							+ ", " + relationTriple.objectLemmaGloss() + ")");
-				}*/
+				/*
+				 * for (RelationTriple relationTriple : sentence.coreMap()
+				 * .get(NaturalLogicAnnotations.RelationTriplesAnnotation.class)) {
+				 * System.out.println(relationTriple.relationLemmaGloss() + "(" +
+				 * relationTriple.subjectLemmaGloss() + ", " + relationTriple.objectLemmaGloss()
+				 * + ")"); }
+				 */
 			}
 			System.out.println("</extracted>");
 			System.out.println("</entry>");

@@ -13,7 +13,7 @@ import edu.stanford.nlp.pipeline.CoreEntityMention;
 import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
-public class ExtractionScript2 {
+public class ExtractionScriptFromTXT {
 
 	public static void main(String[] args) throws IOException {
 
@@ -25,7 +25,7 @@ public class ExtractionScript2 {
 
 		System.out.println("> Pipeline was build");
 
-		File file = new File("bible-luke.txt");
+		File file = new File("resources/biblical/bible-luke.txt");
 		BufferedReader br = new BufferedReader(new FileReader(file));
 
 		String line;
