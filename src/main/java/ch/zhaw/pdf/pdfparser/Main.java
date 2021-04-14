@@ -11,7 +11,7 @@ public class Main {
     final PdfParser pdfParser = new PdfParser();
     System.out.println("");
 
-    final File file = new File("pdfParser/" + System.currentTimeMillis() + ".txt");
+    final File file = new File("pdfOut/pdfParser/" + System.currentTimeMillis() + ".txt");
     final FileOutputStream outputStream;
     try {
       outputStream = new FileOutputStream(file.getPath());

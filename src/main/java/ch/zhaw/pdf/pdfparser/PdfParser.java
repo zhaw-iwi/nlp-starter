@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 
 public class PdfParser {
   final File dummyFile = new File("");
-  final String absolutePath = this.dummyFile.getAbsolutePath() + "/pdfParser";
+  final String absolutePath = this.dummyFile.getAbsolutePath() + "/pdfOut/pdfParser";
   private final Map<String, String> map = new HashMap<>();
 
   public Map<String, String> parse() {
