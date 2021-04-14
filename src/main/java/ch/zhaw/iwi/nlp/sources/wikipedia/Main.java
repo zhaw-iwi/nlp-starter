@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -28,7 +27,8 @@ public class Main {
 	public static void main(String[] args) throws IOException, CsvValidationException {
 		System.out.println("> Hello :-)");
 
-		List<HistoricalFigure> historicalFigures = Main.readFromCSV("resources/pantheon/pantheon.tsv");
+		List<HistoricalFigure> historicalFigures = Main.readFromCSV("resources/pantheon/pantheon.tsv",
+				new HistoricalFigureFactory());
 		// Main.completeUsingWikiQueries(historicalFigures);
 		Main.completeUsingWikiPages(historicalFigures, 3);
 
@@ -44,7 +44,8 @@ public class Main {
 	 * @throws IOException
 	 * @throws CsvValidationException
 	 */
-	private static List<HistoricalFigure> readFromCSV(String filePath) throws IOException, CsvValidationException {
+	public static List<HistoricalFigure> readFromCSV(String filePath, HistoricalFigureFactory factory)
+			throws IOException, CsvValidationException {
 		System.out.println("> Reading from CSV: START");
 
 		List<HistoricalFigure> result = new ArrayList<HistoricalFigure>();
@@ -59,9 +60,9 @@ public class Main {
 		String[] row = csvReader.readNext();
 		String name;
 		String country;
-		int birthyear;
+		int birthYear;
 		String birthCity;
-		String birthyearRaw;
+		String birthYearRaw;
 		String gender;
 		String occupation;
 		while (row != null) {
@@ -73,18 +74,18 @@ public class Main {
 
 			name = row[1];
 			country = row[5];
-			birthyearRaw = row[11];
+			birthYearRaw = row[11];
 			try {
-				birthyear = Integer.parseInt(birthyearRaw);
+				birthYear = Integer.parseInt(birthYearRaw);
 			} catch (NumberFormatException e) {
 				System.out.println(name + ": " + e.getMessage());
-				birthyear = -1;
+				birthYear = -1;
 			}
 			birthCity = row[3];
 			gender = row[12];
 			occupation = row[13];
 
-			result.add(new HistoricalFigure(name, country, birthyear, birthCity, gender, occupation));
+			result.add(factory.create(name, country, birthYear, birthCity, gender, occupation));
 
 			row = csvReader.readNext();
 		}
@@ -177,6 +178,7 @@ public class Main {
 	 */
 	public static void completeUsingWikiPages(List<HistoricalFigure> figures, Integer nOfSentences) {
 		System.out.println("> Reading from WikiPedia (First " + nOfSentences + " Sentences from Page): START");
+
 		// TODO we take the first ten figures only for demo purposes (speed :-))
 		List<HistoricalFigure> sample = figures.subList(0, 10);
 

@@ -1,11 +1,11 @@
 package ch.zhaw.iwi.nlp.sources.wikipedia.biographygenerator;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import ch.zhaw.iwi.nlp.sources.wikipedia.HistoricalFigure;
-
-import java.util.Random;
 
 public class HistoricalFigureWithBio extends HistoricalFigure {
 
@@ -26,7 +26,7 @@ public class HistoricalFigureWithBio extends HistoricalFigure {
 		return this.biography;
 	}
 
-	private String getRandomTemplate(HashMap<String, String[]> templates) {
+	private String getRandomTemplate(Map<String, String[]> templates) {
 		String[] set = templates.get(this.getGender());
 		Random random = new Random();
 		int index = random.nextInt(set.length);
@@ -35,7 +35,7 @@ public class HistoricalFigureWithBio extends HistoricalFigure {
 		return template;
 	}
 
-	public void createBiography(HashMap<String, String[]> templates) {
+	public void createBiography(Map<String, String[]> templates) {
 		String template = this.getRandomTemplate(templates);
 
 		template = template.replace("__NAME__", this.getName());

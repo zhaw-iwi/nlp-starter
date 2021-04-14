@@ -1,9 +1,9 @@
 package ch.zhaw.iwi.nlp.sources.wikipedia.biographygenerator;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
-public class Generator {
+public class BioTemplates {
 	private static final String[] TEMPLATES_FEMALE = new String[] {
 			"__NAME__ was born in __BIRTHCITY__ and lived in __COUNTRYNAME__. She was born in __BIRTHYEAR__ and worked as a __OCCUPATION__.",
 			"__NAME__ was originally born in __BIRTHCITY__ and lived in __COUNTRYNAME__. She was born in __BIRTHYEAR__ and worked as a __OCCUPATION__.",
@@ -68,13 +68,11 @@ public class Generator {
 			"__NAME__ worked as a __OCCUPATION__ and lived in __COUNTRYNAME__. He was born in __BIRTHYEAR__ and grew up in __BIRTHCITY__.",
 			"__NAME__ was a __OCCUPATION__ who worked and lived in __COUNTRYNAME__. He was born in __BIRTHYEAR__ and raised in __BIRTHCITY__." };
 
-	public static void generateBiographiesFromTemplates(List<HistoricalFigureWithBio> people) {
+	public static Map<String, String[]> getTemplatesMap() {
 		HashMap<String, String[]> templates = new HashMap<String, String[]>();
-		templates.put("male", Generator.TEMPLATES_MALE);
-		templates.put("female", Generator.TEMPLATES_FEMALE);
+		templates.put("male", BioTemplates.TEMPLATES_MALE);
+		templates.put("female", BioTemplates.TEMPLATES_FEMALE);
 
-		for (HistoricalFigureWithBio current : people) {
-			current.createBiography(templates);
-		}
+		return templates;
 	}
 }
