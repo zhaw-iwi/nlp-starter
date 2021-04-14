@@ -62,7 +62,8 @@ public class PantheonHelper {
 			gender = row[12];
 			occupation = row[13];
 
-			result.add(factory.create(name, country, birthYear, birthCity, gender, occupation));
+			result.add(factory.create(name, country, birthYear, birthCity, gender.toLowerCase(),
+					occupation.toLowerCase()));
 
 			row = csvReader.readNext();
 		}
