@@ -9,7 +9,7 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 
-public class Democracynow {
+public class Main {
 
 	public static void main(String[] args) throws IllegalArgumentException, FeedException, IOException {
 		URL feedSource = new URL("https://www.democracynow.org/democracynow.rss");
