@@ -27,11 +27,11 @@ public class Main {
 	public static void main(String[] args) throws IOException, CsvValidationException {
 		System.out.println("> Hello :-)");
 
-		List<HistoricalFigure> historicalFigures = Main.readFromCSV("ressources/pantheon.tsv");
+		List<HistoricalFigure> historicalFigures = Main.readFromCSV("resources/pantheon/pantheon.tsv");
 		Main.completeUsingWiki(historicalFigures);
 
 		// TODO
-		// process all figures in order to (insert into DB, create training data, ...)
+		// process all figures in order to (insert 7 DB, create training data, ...)
 	}
 
 	/**
@@ -47,7 +47,7 @@ public class Main {
 
 		List<HistoricalFigure> result = new ArrayList<HistoricalFigure>();
 
-		FileReader csvFileReader = new FileReader("ressources/pantheon.tsv");
+		FileReader csvFileReader = new FileReader(filePath);
 		CSVParser tsvParser = new CSVParserBuilder().withSeparator('\t').build();
 		CSVReader csvReader = new CSVReaderBuilder(csvFileReader).withCSVParser(tsvParser).build();
 
@@ -99,6 +99,7 @@ public class Main {
 	 */
 	private static void completeUsingWiki(List<HistoricalFigure> figures) throws MalformedURLException, IOException {
 		System.out.println("> Reading from WikiPedia: START");
+		// TODO we take the first ten figures only for demo purposes (speed :-))
 		List<HistoricalFigure> sample = figures.subList(0, 10);
 
 		// LOOP THROUGH EACH HISTORICAL FIGURE

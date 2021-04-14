@@ -58,11 +58,11 @@ public class ExtractionScript {
 				}
 
 				// 3.2 Triples
-				for (RelationTriple relationTriple : sentence.coreMap()
+				/*for (RelationTriple relationTriple : sentence.coreMap()
 						.get(NaturalLogicAnnotations.RelationTriplesAnnotation.class)) {
 					System.out.println(relationTriple.relationLemmaGloss() + "(" + relationTriple.subjectLemmaGloss()
 							+ ", " + relationTriple.objectLemmaGloss() + ")");
-				}
+				}*/
 			}
 			System.out.println("</extracted>");
 			System.out.println("</entry>");

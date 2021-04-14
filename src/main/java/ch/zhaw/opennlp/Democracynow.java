@@ -16,8 +16,6 @@ public class Democracynow {
 		SyndFeedInput input = new SyndFeedInput();
 		SyndFeed feed = input.build(new XmlReader(feedSource));
 
-		// System.out.println(feed);
-
 		for (Object current : feed.getEntries()) {
 			SyndEntry entry = (SyndEntry) current;
 			System.out.println(entry.getTitle());

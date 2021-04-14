@@ -104,24 +104,32 @@ public class Main {
 
 	private static void writeToFile(String news, String facts) throws IOException {
 		BufferedWriter writer = new BufferedWriter(new FileWriter(Main.FILE_T2F, true));
-		writer.append("<|startoftext|>");
-		writer.append("[NEWS_PROMPT]");
+		writer.append("<item>");
+		writer.newLine();
+		writer.append("<text>");
 		writer.append(news);
+		writer.append("</text>");
 		writer.newLine();
-		writer.append("[FACTS_PROMPT]");
+		writer.append("<facts>");
 		writer.append(facts);
+		writer.append("</facts>");
 		writer.newLine();
-		writer.append("<|endoftext|>");
+		writer.append("</item>");
+		writer.newLine();
 		writer.close();
 
 		writer = new BufferedWriter(new FileWriter(Main.FILE_F2T, true));
-		writer.append("<|startoftext|>");
-		writer.append("[FACTS_PROMPT]");
-		writer.append(facts);
+		writer.append("<item>");
 		writer.newLine();
-		writer.append("[NEWS_PROMPT]");
+		writer.append("<facts>");
+		writer.append(facts);
+		writer.append("</facts>");
+		writer.newLine();
+		writer.append("<text>");
 		writer.append(news);
-		writer.append("<|endoftext|>");
+		writer.append("</text>");
+		writer.newLine();
+		writer.append("</item>");
 		writer.newLine();
 		writer.close();
 
