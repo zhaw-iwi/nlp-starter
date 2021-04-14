@@ -1,6 +1,5 @@
 package ch.zhaw.iwi.nlp.sources.wikipedia;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,10 +15,6 @@ import java.util.Map;
 import org.jsoup.Jsoup;
 
 import com.google.gson.Gson;
-import com.opencsv.CSVParser;
-import com.opencsv.CSVParserBuilder;
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvValidationException;
 
 public class Main {
@@ -27,7 +22,7 @@ public class Main {
 	public static void main(String[] args) throws IOException, CsvValidationException {
 		System.out.println("> Hello :-)");
 
-		List<HistoricalFigure> historicalFigures = Main.readFromCSV("resources/pantheon/pantheon.tsv",
+		List<HistoricalFigure> historicalFigures = PantheonHelper.readFromCSV("resources/pantheon/pantheon.tsv",
 				new HistoricalFigureFactory());
 		// Main.completeUsingWikiQueries(historicalFigures);
 		Main.completeUsingWikiPages(historicalFigures, 3);
@@ -37,63 +32,33 @@ public class Main {
 	}
 
 	/**
-	 * Use of OpenCSV to read from tab-separated file
+	 * Use of GSON to request data from WikiPedia and extract description from JSON
+	 * response. We extract the first nOfSentences of sentences from each page.
 	 * 
-	 * @param filePath
-	 * @return
-	 * @throws IOException
-	 * @throws CsvValidationException
+	 * @param figures
+	 * @param nOfSentences How many of the first sentences per page?
 	 */
-	public static List<HistoricalFigure> readFromCSV(String filePath, HistoricalFigureFactory factory)
-			throws IOException, CsvValidationException {
-		System.out.println("> Reading from CSV: START");
+	public static void completeUsingWikiPages(List<HistoricalFigure> figures, Integer nOfSentences) {
+		System.out.println("> Reading from WikiPedia (First " + nOfSentences + " Sentences from Page): START");
 
-		List<HistoricalFigure> result = new ArrayList<HistoricalFigure>();
+		// TODO we take the first ten figures only for demo purposes (speed :-))
+		List<HistoricalFigure> sample = figures.subList(0, 10);
 
-		FileReader csvFileReader = new FileReader(filePath);
-		CSVParser tsvParser = new CSVParserBuilder().withSeparator('\t').build();
-		CSVReader csvReader = new CSVReaderBuilder(csvFileReader).withCSVParser(tsvParser).build();
-
-		csvReader.readNext(); // skip header row
-
-		// LOOP THROUGH EACH LINE
-		String[] row = csvReader.readNext();
-		String name;
-		String country;
-		int birthYear;
-		String birthCity;
-		String birthYearRaw;
-		String gender;
-		String occupation;
-		while (row != null) {
-
-//			for (int i = 0; i < row.length; i++) {
-//				System.out.print(row[i] + "\t");
-//			}
-//			System.out.println();
-
-			name = row[1];
-			country = row[5];
-			birthYearRaw = row[11];
-			try {
-				birthYear = Integer.parseInt(birthYearRaw);
-			} catch (NumberFormatException e) {
-				System.out.println(name + ": " + e.getMessage());
-				birthYear = -1;
+		int n = 0;
+		Long pageId;
+		String extract;
+		for (HistoricalFigure current : sample) {
+			pageId = WikiPediaHelper.searchPageId(current.getName());
+			if (pageId != null) {
+				extract = WikiPediaHelper.getPage(pageId, nOfSentences);
+				System.out.println(extract);
+				current.setDescription(extract);
+				n++;
 			}
-			birthCity = row[3];
-			gender = row[12];
-			occupation = row[13];
-
-			result.add(factory.create(name, country, birthYear, birthCity, gender, occupation));
-
-			row = csvReader.readNext();
 		}
 
-		System.out.println("> Reading from CSV: DONE");
-		System.out.println("> Read " + result.size() + " figures");
-
-		return result;
+		System.out.println("> Reading from WikiPedia (First " + nOfSentences + " Sentences from Page): DONE");
+		System.out.println("> Found " + n + " descriptions");
 	}
 
 	/**
@@ -144,7 +109,7 @@ public class Main {
 			if (responseQuerySearch.size() > 0) {
 				responseQuerySearchFirst = (Map<String, Object>) responseQuerySearch.get(0);
 				descriptionWithHTML = (String) responseQuerySearchFirst.get("snippet");
-				description = Main.removeHTML(descriptionWithHTML);
+				description = Jsoup.parse(descriptionWithHTML).text();
 				n++;
 			} else {
 				description = null;
@@ -158,45 +123,4 @@ public class Main {
 		System.out.println("> Reading from WikiPedia (Query Result Excerpts): DONE");
 		System.out.println("> Found " + n + " descriptions");
 	}
-
-	/**
-	 * Use of JSoup to remove HTML elements
-	 * 
-	 * @param withHTML
-	 * @return
-	 */
-	private static String removeHTML(String withHTML) {
-		return Jsoup.parse(withHTML).text();
-	}
-
-	/**
-	 * Use of GSON to request data from WikiPedia and extract description from JSON
-	 * response. We extract the first couple of sentences from each page.
-	 * 
-	 * @param figures
-	 * @param nOfSentences How many of the first sentences per page?
-	 */
-	public static void completeUsingWikiPages(List<HistoricalFigure> figures, Integer nOfSentences) {
-		System.out.println("> Reading from WikiPedia (First " + nOfSentences + " Sentences from Page): START");
-
-		// TODO we take the first ten figures only for demo purposes (speed :-))
-		List<HistoricalFigure> sample = figures.subList(0, 10);
-
-		int n = 0;
-		Long pageId;
-		String extract;
-		for (HistoricalFigure current : sample) {
-			pageId = WikiPediaHelper.searchPageId(current.getName());
-			if (pageId != null) {
-				extract = WikiPediaHelper.getPage(pageId, nOfSentences);
-				System.out.println(extract);
-				current.setDescription(extract);
-				n++;
-			}
-		}
-
-		System.out.println("> Reading from WikiPedia (First " + nOfSentences + " Sentences from Page): DONE");
-		System.out.println("> Found " + n + " descriptions");
-	}
-
 }
