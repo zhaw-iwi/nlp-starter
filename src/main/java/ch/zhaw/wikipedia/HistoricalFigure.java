@@ -3,14 +3,19 @@ package ch.zhaw.wikipedia;
 public class HistoricalFigure {
 
 	private String name;
-	private int birthyear;
+	private String country;
+	private int birthYear;
+	private String birthCity;
 	private String gender;
 	private String occupation;
 	private String description;
 
-	public HistoricalFigure(String name, int birthyear, String gender, String occupation) {
+	public HistoricalFigure(String name, String country, int birthYear, String birthCity, String gender,
+			String occupation) {
 		this.name = name;
-		this.birthyear = birthyear;
+		this.country = country;
+		this.birthYear = birthYear;
+		this.birthCity = birthCity;
 		this.gender = gender;
 		this.occupation = occupation;
 	}
@@ -27,8 +32,16 @@ public class HistoricalFigure {
 		return this.name;
 	}
 
-	public int getBirthyear() {
-		return this.birthyear;
+	public String getCountry() {
+		return this.country;
+	}
+
+	public int getBirthYear() {
+		return this.birthYear;
+	}
+
+	public String getBirthCity() {
+		return this.birthCity;
 	}
 
 	public String getGender() {

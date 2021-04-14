@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -28,10 +29,11 @@ public class Main {
 		System.out.println("> Hello :-)");
 
 		List<HistoricalFigure> historicalFigures = Main.readFromCSV("resources/pantheon/pantheon.tsv");
-		Main.completeUsingWiki(historicalFigures);
+		// Main.completeUsingWikiQueries(historicalFigures);
+		Main.completeUsingWikiPages(historicalFigures, 3);
 
 		// TODO
-		// process all figures in order to (insert 7 DB, create training data, ...)
+		// process all figures in order to insert into DB, create training data, ...
 	}
 
 	/**
@@ -56,7 +58,9 @@ public class Main {
 		// LOOP THROUGH EACH LINE
 		String[] row = csvReader.readNext();
 		String name;
+		String country;
 		int birthyear;
+		String birthCity;
 		String birthyearRaw;
 		String gender;
 		String occupation;
@@ -68,6 +72,7 @@ public class Main {
 //			System.out.println();
 
 			name = row[1];
+			country = row[5];
 			birthyearRaw = row[11];
 			try {
 				birthyear = Integer.parseInt(birthyearRaw);
@@ -75,10 +80,11 @@ public class Main {
 				System.out.println(name + ": " + e.getMessage());
 				birthyear = -1;
 			}
+			birthCity = row[3];
 			gender = row[12];
 			occupation = row[13];
 
-			result.add(new HistoricalFigure(name, birthyear, gender, occupation));
+			result.add(new HistoricalFigure(name, country, birthyear, birthCity, gender, occupation));
 
 			row = csvReader.readNext();
 		}
@@ -91,14 +97,17 @@ public class Main {
 
 	/**
 	 * Use of GSON to request data from WikiPedia and extract description from JSON
-	 * response
+	 * response. We use WikiPedia queries, and get search result excerpts. Note that
+	 * these excerpts just contain the first couple of sentences of a page. This is
+	 * not what we want if we want "real" data.
 	 * 
 	 * @param figures
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	private static void completeUsingWiki(List<HistoricalFigure> figures) throws MalformedURLException, IOException {
-		System.out.println("> Reading from WikiPedia: START");
+	public static void completeUsingWikiQueries(List<HistoricalFigure> figures)
+			throws MalformedURLException, IOException {
+		System.out.println("> Reading from WikiPedia (Query Result Excerpts): START");
 		// TODO we take the first ten figures only for demo purposes (speed :-))
 		List<HistoricalFigure> sample = figures.subList(0, 10);
 
@@ -145,7 +154,7 @@ public class Main {
 			System.out.println(description);
 		}
 
-		System.out.println("> Reading from WikiPedia: DONE");
+		System.out.println("> Reading from WikiPedia (Query Result Excerpts): DONE");
 		System.out.println("> Found " + n + " descriptions");
 	}
 
@@ -159,4 +168,87 @@ public class Main {
 		return Jsoup.parse(withHTML).text();
 	}
 
+	/**
+	 * Use of GSON to request data from WikiPedia and extract description from JSON
+	 * response. We extract the first couple of sentences from each page.
+	 * 
+	 * @param figures
+	 * @param nOfSentences How many of the first sentences per page?
+	 */
+	public static void completeUsingWikiPages(List<HistoricalFigure> figures, Integer nOfSentences) {
+		System.out.println("> Reading from WikiPedia (First " + nOfSentences + " Sentences from Page): START");
+		// TODO we take the first ten figures only for demo purposes (speed :-))
+		List<HistoricalFigure> sample = figures.subList(0, 10);
+
+		int n = 0;
+		Long pageId;
+		String extract;
+		for (HistoricalFigure current : sample) {
+			pageId = Main.searchPageId(current.getName());
+			extract = Main.getPage(pageId, nOfSentences);
+			System.out.println(extract);
+			current.setDescription(extract);
+			n++;
+		}
+
+		System.out.println("> Reading from WikiPedia (First " + nOfSentences + " Sentences from Page): DONE");
+		System.out.println("> Found " + n + " descriptions");
+	}
+
+	private static String getPage(Long pageId, Integer sentences) {
+		String result = null;
+		String url = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&pageids="
+				+ pageId.intValue() + "&exsentences=" + sentences.toString() + "&explaintext=1";
+
+		InputStream is;
+		try {
+			is = new URL(url).openStream();
+			Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
+
+			Gson gson = new Gson();
+			Map<String, Object> deserialised = gson.fromJson(reader, Map.class);
+			Map<String, Object> query = (Map<String, Object>) deserialised.get("query");
+			Map<String, Object> pages = (Map<String, Object>) query.get("pages");
+			Map<String, Object> page = (Map<String, Object>) pages.get(pageId.toString());
+			result = (String) page.get("extract");
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	private static Long searchPageId(String name) {
+		Long pageId = null;
+		String nameUrlEncoded = null;
+		try {
+			nameUrlEncoded = URLEncoder.encode(name, StandardCharsets.UTF_8.toString());
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+			return pageId;
+		}
+		String url = "https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&list=search&srsearch="
+				+ nameUrlEncoded + "&format=json";
+
+		InputStream is;
+		try {
+			is = new URL(url).openStream();
+			Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
+
+			Gson gson = new Gson();
+			Map<String, Object> deserialised = gson.fromJson(reader, Map.class);
+			Map<String, Object> query = (Map<String, Object>) deserialised.get("query");
+			List<Object> search = (List<Object>) query.get("search");
+			if (search.size() > 0) {
+				Map<String, Object> firstHit = (Map<String, Object>) search.get(0);
+				pageId = Double.valueOf(String.valueOf(firstHit.get("pageid"))).longValue();
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return pageId;
+	}
 }
