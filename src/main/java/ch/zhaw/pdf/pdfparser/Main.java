@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class MainPdfParser {
+public class Main {
 
   public static void main(final String[] args) {
     final PdfParser pdfParser = new PdfParser();

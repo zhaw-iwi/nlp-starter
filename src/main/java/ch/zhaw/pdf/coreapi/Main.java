@@ -9,7 +9,7 @@ import java.util.Map;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
-public class MainCoreApiDataExtraction {
+public class Main {
 
 	public static void main(final String[] args) {
 
