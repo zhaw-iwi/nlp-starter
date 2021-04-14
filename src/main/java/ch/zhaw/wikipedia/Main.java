@@ -185,10 +185,12 @@ public class Main {
 		String extract;
 		for (HistoricalFigure current : sample) {
 			pageId = WikiPediaHelper.searchPageId(current.getName());
-			extract = WikiPediaHelper.getPage(pageId, nOfSentences);
-			System.out.println(extract);
-			current.setDescription(extract);
-			n++;
+			if (pageId != null) {
+				extract = WikiPediaHelper.getPage(pageId, nOfSentences);
+				System.out.println(extract);
+				current.setDescription(extract);
+				n++;
+			}
 		}
 
 		System.out.println("> Reading from WikiPedia (First " + nOfSentences + " Sentences from Page): DONE");

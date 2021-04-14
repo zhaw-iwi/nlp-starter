@@ -39,7 +39,11 @@ public class ExtractionScriptFromWikiPedia {
 		Long pageId;
 		String personDescription;
 		CoreDocument document;
-		int n = 3;
+
+		// TODO this n was introduced to save time and just look at the first couple of
+		// lines. Remove this if you want to go through all of the historical figures.
+		int n = 5;
+		
 		while (currentLine != null && n > 0) {
 			// 1.1. Read name from CSV current line
 			name = currentLine[1];
