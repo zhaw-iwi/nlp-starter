@@ -1,4 +1,4 @@
-package ch.zhaw.pdf.coreapi;
+package ch.zhaw.nlp.sources.pdf.coreapi;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

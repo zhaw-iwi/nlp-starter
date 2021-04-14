@@ -1,4 +1,4 @@
-package ch.zhaw.wikipedia;
+package ch.zhaw.nlp.sources.wikipedia;
 
 public class HistoricalFigure {
 

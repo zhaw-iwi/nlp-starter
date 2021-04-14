@@ -1,10 +1,11 @@
-package ch.zhaw.wikipedia.biographygenerator;
+package ch.zhaw.nlp.sources.wikipedia.biographygenerator;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.Random;
 
-import ch.zhaw.wikipedia.HistoricalFigure;
+import ch.zhaw.nlp.sources.wikipedia.HistoricalFigure;
+
+import java.util.Random;
 
 public class HistoricalFigureWithBio extends HistoricalFigure {
 

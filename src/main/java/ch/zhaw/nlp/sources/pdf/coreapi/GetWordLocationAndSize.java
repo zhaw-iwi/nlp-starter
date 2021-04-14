@@ -1,4 +1,4 @@
-package ch.zhaw.pdf.coreapi;
+package ch.zhaw.nlp.sources.pdf.coreapi;
 
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;

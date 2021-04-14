@@ -1,4 +1,4 @@
-package ch.zhaw.pdf.pdfparser;
+package ch.zhaw.nlp.sources.pdf.pdfparser;
 
 import java.io.File;
 import java.io.FileNotFoundException;

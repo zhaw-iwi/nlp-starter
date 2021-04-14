@@ -1,4 +1,4 @@
-package ch.zhaw.democracynow;
+package ch.zhaw.nlp.sources.democracynow;
 
 import java.io.IOException;
 import java.net.URL;

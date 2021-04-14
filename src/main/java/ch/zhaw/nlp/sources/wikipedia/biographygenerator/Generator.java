@@ -1,4 +1,4 @@
-package ch.zhaw.wikipedia.biographygenerator;
+package ch.zhaw.nlp.sources.wikipedia.biographygenerator;
 
 import java.util.HashMap;
 import java.util.List;

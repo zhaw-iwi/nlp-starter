@@ -1,15 +1,16 @@
-package ch.zhaw.corenlp;
+package ch.zhaw.nlp.corenlp;
 
+import java.io.FileReader;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Properties;
 
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.XmlReader;
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderHeaderAwareBuilder;
+import com.opencsv.exceptions.CsvValidationException;
 
+import ch.zhaw.nlp.sources.wikipedia.WikiPediaHelper;
 import edu.stanford.nlp.ie.util.RelationTriple;
 import edu.stanford.nlp.naturalli.NaturalLogicAnnotations;
 import edu.stanford.nlp.pipeline.CoreDocument;
@@ -17,9 +18,9 @@ import edu.stanford.nlp.pipeline.CoreEntityMention;
 import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
-public class ExtractionScriptFromRSS {
+public class ExtractionScriptFromWikiPedia {
 
-	public static void main(String[] args) throws IllegalArgumentException, FeedException, IOException {
+	public static void main(String[] args) throws IOException, CsvValidationException {
 
 		System.out.println("> Hello :-)");
 
@@ -29,24 +30,34 @@ public class ExtractionScriptFromRSS {
 
 		System.out.println("> Pipeline was build");
 
-		URL feedSource = new URL("https://www.democracynow.org/democracynow.rss");
-		SyndFeedInput input = new SyndFeedInput();
-		SyndFeed feed = input.build(new XmlReader(feedSource));
-
-		String title;
-		String content;
+		// Open and Parse CSV
+		CSVParser parser = new CSVParserBuilder().withSeparator('\t').build();
+		CSVReader reader = new CSVReaderHeaderAwareBuilder(new FileReader("resources/pantheon/pantheon.tsv"))
+				.withCSVParser(parser).build();
+		String[] currentLine = reader.readNext();
+		String name;
+		Long pageId;
+		String personDescription;
 		CoreDocument document;
-		for (Object current : feed.getEntries()) {
-			// 1. Extract text from RSS item
-			title = ((SyndEntry) current).getTitle();
-			// content = ((SyndEntry) current).getDescription().getValue();
+
+		// TODO this n was introduced to save time and just look at the first couple of
+		// lines. Remove this if you want to go through all of the historical figures.
+		int n = 5;
+		
+		while (currentLine != null && n > 0) {
+			// 1.1. Read name from CSV current line
+			name = currentLine[1];
+
+			// 1.2. With name, get description from WikiPedia
+			pageId = WikiPediaHelper.searchPageId(name);
+			personDescription = WikiPediaHelper.getPage(pageId, 3);
 
 			System.out.println("<entry>");
-			System.out.println("<text>" + title + "</text>");
+			System.out.println("<text>" + personDescription + "</text>");
 			System.out.println("<extracted>");
 
 			// 2. Do annotation
-			document = new CoreDocument(title);
+			document = new CoreDocument(personDescription);
 			pipeline.annotate(document);
 
 			// 3. Extract annotations
@@ -58,16 +69,18 @@ public class ExtractionScriptFromRSS {
 				}
 
 				// 3.2 Triples
+
 				for (RelationTriple relationTriple : sentence.coreMap()
 						.get(NaturalLogicAnnotations.RelationTriplesAnnotation.class)) {
 					System.out.println(relationTriple.relationLemmaGloss() + "(" + relationTriple.subjectLemmaGloss()
 							+ ", " + relationTriple.objectLemmaGloss() + ")");
 				}
-
 			}
 			System.out.println("</extracted>");
 			System.out.println("</entry>");
 
+			currentLine = reader.readNext();
+			n--;
 		}
 
 	}

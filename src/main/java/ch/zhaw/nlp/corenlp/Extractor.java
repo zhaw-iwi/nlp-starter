@@ -1,4 +1,4 @@
-package ch.zhaw.corenlp;
+package ch.zhaw.nlp.corenlp;
 
 import java.util.Collection;
 import java.util.Properties;

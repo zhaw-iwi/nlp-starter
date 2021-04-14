@@ -1,4 +1,4 @@
-package ch.zhaw.corenlp;
+package ch.zhaw.nlp.corenlp;
 
 import java.io.BufferedReader;
 import java.io.File;

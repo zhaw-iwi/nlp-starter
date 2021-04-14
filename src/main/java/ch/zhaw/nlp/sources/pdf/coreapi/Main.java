@@ -1,4 +1,4 @@
-package ch.zhaw.pdf.coreapi;
+package ch.zhaw.nlp.sources.pdf.coreapi;
 
 import java.io.File;
 import java.io.FileOutputStream;

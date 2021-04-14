@@ -1,4 +1,4 @@
-package ch.zhaw.pdf.pdfparser;
+package ch.zhaw.nlp.sources.pdf.pdfparser;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;

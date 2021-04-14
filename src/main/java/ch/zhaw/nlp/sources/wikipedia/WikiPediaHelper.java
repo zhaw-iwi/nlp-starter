@@ -1,4 +1,4 @@
-package ch.zhaw.wikipedia;
+package ch.zhaw.nlp.sources.wikipedia;
 
 import java.io.IOException;
 import java.io.InputStream;

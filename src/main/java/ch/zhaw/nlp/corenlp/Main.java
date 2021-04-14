@@ -1,4 +1,4 @@
-package ch.zhaw.corenlp;
+package ch.zhaw.nlp.corenlp;
 
 // https://rss.com/blog/popular-rss-feeds/
 

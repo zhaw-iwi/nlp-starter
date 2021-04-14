@@ -1,4 +1,4 @@
-package ch.zhaw.opennlp;
+package ch.zhaw.nlp.opennlp;
 
 import java.io.IOException;
 import java.io.InputStream;

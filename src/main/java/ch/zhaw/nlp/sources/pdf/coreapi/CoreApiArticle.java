@@ -1,4 +1,4 @@
-package ch.zhaw.pdf.coreapi;
+package ch.zhaw.nlp.sources.pdf.coreapi;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
