@@ -1,4 +1,4 @@
-package ch.zhaw.iwi.nlp.sources.democracynow;
+package ch.zhaw.iwi.nlp.sources.rssnews;
 
 import java.io.IOException;
 import java.net.URL;
