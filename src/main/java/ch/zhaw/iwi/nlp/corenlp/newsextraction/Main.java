@@ -18,8 +18,8 @@ import ch.zhaw.iwi.nlp.sources.rssnews.RssFeeds;
 
 public class Main {
 
-	private static final String FILE_T2F = "Text2Facts";
-	private static final String FILE_F2T = "Facts2Text";
+	private static final String FILE_T2F = "coreNLPOut/transformerFineTuning/Text2Facts";
+	private static final String FILE_F2T = "coreNLPOut/transformerFineTuning/Facts2Text";
 
 	public static void main(String[] args) throws IllegalArgumentException, FeedException, IOException {
 
