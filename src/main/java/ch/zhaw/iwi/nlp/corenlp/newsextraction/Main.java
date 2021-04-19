@@ -1,9 +1,5 @@
 package ch.zhaw.iwi.nlp.corenlp.newsextraction;
 
-// https://rss.com/blog/popular-rss-feeds/
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 
@@ -14,12 +10,10 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 
+import ch.zhaw.iwi.nlp.corenlp.FileWriteHelper;
 import ch.zhaw.iwi.nlp.sources.rssnews.RssFeeds;
 
 public class Main {
-
-	private static final String FILE_T2F = "coreNLPOut/transformerFineTuning/Text2Facts";
-	private static final String FILE_F2T = "coreNLPOut/transformerFineTuning/Facts2Text";
 
 	public static void main(String[] args) throws IllegalArgumentException, FeedException, IOException {
 
@@ -59,7 +53,7 @@ public class Main {
 							System.out.println("> Processing ENTRY\n" + text + "\n");
 							extractor.getFacts(text);
 							System.out.println(mgmt);
-							Main.writeToFile(text, mgmt.toString());
+							FileWriteHelper.writeToFile(text, mgmt.toString());
 						}
 					}
 				}
@@ -68,40 +62,5 @@ public class Main {
 				e.printStackTrace();
 			}
 		}
-
 	}
-
-	private static void writeToFile(String news, String facts) throws IOException {
-		BufferedWriter writer = new BufferedWriter(new FileWriter(Main.FILE_T2F, true));
-		writer.append("<item>");
-		writer.newLine();
-		writer.append("<text>");
-		writer.append(news);
-		writer.append("</text>");
-		writer.newLine();
-		writer.append("<facts>");
-		writer.append(facts);
-		writer.append("</facts>");
-		writer.newLine();
-		writer.append("</item>");
-		writer.newLine();
-		writer.close();
-
-		writer = new BufferedWriter(new FileWriter(Main.FILE_F2T, true));
-		writer.append("<item>");
-		writer.newLine();
-		writer.append("<facts>");
-		writer.append(facts);
-		writer.append("</facts>");
-		writer.newLine();
-		writer.append("<text>");
-		writer.append(news);
-		writer.append("</text>");
-		writer.newLine();
-		writer.append("</item>");
-		writer.newLine();
-		writer.close();
-
-	}
-
 }
