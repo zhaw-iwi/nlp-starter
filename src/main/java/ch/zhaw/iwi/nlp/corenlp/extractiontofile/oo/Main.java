@@ -57,7 +57,7 @@ public class Main {
 						description = entry.getDescription();
 						if (description != null) {
 							text = description.getValue().replaceAll("\\<.*?\\>", "");
-							System.out.println("> Processing ENTRY\n" + text + "\n");
+							System.out.println("> Processing ENTRY\n" + text);
 							extractor.getFacts(text);
 							System.out.println(mgmt);
 							FileWriteHelper.writeToFile(text, mgmt.toString());
