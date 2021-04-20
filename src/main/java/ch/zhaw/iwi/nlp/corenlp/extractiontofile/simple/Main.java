@@ -11,7 +11,7 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 
-import ch.zhaw.iwi.nlp.corenlp.FileWriteHelper;
+import ch.zhaw.iwi.nlp.corenlp.extractiontofile.FileWriteHelper;
 import edu.stanford.nlp.ie.util.RelationTriple;
 import edu.stanford.nlp.naturalli.NaturalLogicAnnotations;
 import edu.stanford.nlp.pipeline.CoreDocument;

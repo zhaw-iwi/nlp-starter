@@ -1,4 +1,4 @@
-package ch.zhaw.iwi.nlp.corenlp;
+package ch.zhaw.iwi.nlp.corenlp.extractiontofile;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;

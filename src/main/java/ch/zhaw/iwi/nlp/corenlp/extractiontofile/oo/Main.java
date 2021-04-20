@@ -10,7 +10,7 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 
-import ch.zhaw.iwi.nlp.corenlp.FileWriteHelper;
+import ch.zhaw.iwi.nlp.corenlp.extractiontofile.FileWriteHelper;
 import ch.zhaw.iwi.nlp.sources.rssnews.RssFeeds;
 
 public class Main {
