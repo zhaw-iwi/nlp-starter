@@ -35,6 +35,11 @@ public class Extractor {
 		this.pipeline = new StanfordCoreNLP(properties);
 	}
 
+	public Extractor(Manager mgmt, StanfordCoreNLP pipeline) {
+		this.mgmt = mgmt;
+		this.pipeline = pipeline;
+	}
+
 	public void getFacts(String text) {
 		CoreDocument document = new CoreDocument(text);
 		this.runPipeline(document);
