@@ -1,4 +1,4 @@
-package ch.zhaw.iwi.nlp.corenlp.newsextraction;
+package ch.zhaw.iwi.nlp.corenlp.extractiontofile.oo;
 
 import java.util.Collection;
 import java.util.Properties;

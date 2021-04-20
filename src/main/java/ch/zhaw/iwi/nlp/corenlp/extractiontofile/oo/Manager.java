@@ -1,4 +1,4 @@
-package ch.zhaw.iwi.nlp.corenlp.newsextraction;
+package ch.zhaw.iwi.nlp.corenlp.extractiontofile.oo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +9,7 @@ import edu.stanford.nlp.util.Pair;
 
 public class Manager {
 
-	private static final String EOL = "\n";
+	private static final String SEPARATOR = " ";
 
 	private final Map<String, List<String>> unaryFacts;
 	private final Map<String, List<Pair<String, String>>> binaryFacts;
@@ -30,7 +30,7 @@ public class Manager {
 		}
 
 		List<String> values = this.unaryFacts.get(factKey);
-		if (!this.contains(values, argClean)) {
+		if (!Manager.contains(values, argClean)) {
 			values.add(argClean);
 		}
 	}
@@ -58,13 +58,13 @@ public class Manager {
 		for (String key : this.unaryFacts.keySet()) {
 			List<String> values = this.unaryFacts.get(key);
 			for (String value : values) {
-				result.append(key + "(" + value + ")." + Manager.EOL);
+				result.append(key + "(" + value + ")." + Manager.SEPARATOR);
 			}
 		}
 		for (String key : this.binaryFacts.keySet()) {
 			List<Pair<String, String>> values = this.binaryFacts.get(key);
 			for (Pair<String, String> value : values) {
-				result.append(key + "(" + value.first + ", " + value.second + ")." + Manager.EOL);
+				result.append(key + "(" + value.first + ", " + value.second + ")." + Manager.SEPARATOR);
 			}
 		}
 		return result.toString();

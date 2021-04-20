@@ -1,4 +1,4 @@
-package ch.zhaw.iwi.nlp.corenlp.newsextraction;
+package ch.zhaw.iwi.nlp.corenlp.extractiontofile.oo;
 
 import java.io.IOException;
 import java.net.URL;
